@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  background: #fffaf4;
+  color: #2d2630;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(255, 247, 248, 0.92), rgba(255, 250, 244, 0.98) 42%, #ffffff 100%);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: #ffd1dc;
+  color: #2d2630;
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-block {
+    @apply py-12 sm:py-16 lg:py-20;
+  }
+
+  .button-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-blush-600 px-5 py-3 text-sm font-semibold text-white shadow-button transition hover:bg-blush-700 focus:outline-none focus:ring-2 focus:ring-blush-300 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .button-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-blush-200 bg-white px-5 py-3 text-sm font-semibold text-ink transition hover:border-blush-400 hover:bg-blush-50 focus:outline-none focus:ring-2 focus:ring-blush-200 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .input-field {
+    @apply w-full rounded-2xl border border-blush-100 bg-white px-4 py-3 text-sm text-ink outline-none transition placeholder:text-zinc-400 focus:border-blush-400 focus:ring-4 focus:ring-blush-100;
+  }
+
+  .label-field {
+    @apply text-sm font-semibold text-ink;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
+  }
+}
