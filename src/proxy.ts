@@ -1,12 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-
-function getAdminEmails() {
-  return (process.env.ADMIN_EMAILS || "")
-    .split(",")
-    .map((email) => email.trim().toLowerCase())
-    .filter(Boolean);
-}
+import { userHasAdminAccess } from "@/lib/admin-auth";
 
 function hasRealSupabaseEnv(url?: string, key?: string) {
   return Boolean(
@@ -30,12 +24,22 @@ export async function proxy(request: NextRequest) {
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!hasRealSupabaseEnv(supabaseUrl, supabaseKey)) {
-    return NextResponse.next();
+    if (isLoginRoute) {
+      return NextResponse.next();
+    }
+
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/admin/login";
+    redirectUrl.searchParams.set("redirectedFrom", pathname);
+
+    return NextResponse.redirect(redirectUrl);
   }
 
   const response = NextResponse.next({
     request
   });
+  response.headers.set("Cache-Control", "no-store, max-age=0");
+  response.headers.set("X-Robots-Tag", "noindex, nofollow");
 
   const supabase = createServerClient(supabaseUrl!, supabaseKey!, {
     cookies: {
@@ -55,11 +59,7 @@ export async function proxy(request: NextRequest) {
     data: { user }
   } = await supabase.auth.getUser();
 
-  const adminEmails = getAdminEmails();
-  const isAllowedAdmin =
-    Boolean(user) &&
-    (adminEmails.length === 0 ||
-      adminEmails.includes((user?.email || "").toLowerCase()));
+  const isAllowedAdmin = userHasAdminAccess(user);
 
   if (!isLoginRoute && !isAllowedAdmin) {
     const redirectUrl = request.nextUrl.clone();

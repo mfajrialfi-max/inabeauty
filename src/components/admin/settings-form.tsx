@@ -5,6 +5,7 @@ import { Save } from "lucide-react";
 import { useState } from "react";
 import type { SiteSettings } from "@/types/catalog";
 import { getBrowserSupabase } from "@/lib/supabase/client";
+import { normalizeOptionalUrl } from "@/lib/utils";
 
 export function SettingsForm({ settings }: { settings: SiteSettings }) {
   const router = useRouter();
@@ -28,12 +29,32 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
     setSaving(true);
     setMessage("");
 
+    const instagramUrl = normalizeOptionalUrl(form.instagram_url);
+    const tiktokUrl = normalizeOptionalUrl(form.tiktok_url);
+    const facebookUrl = normalizeOptionalUrl(form.facebook_url);
+    const whatsappChannelUrl = normalizeOptionalUrl(form.whatsapp_channel_url);
+    const urlFields = [
+      ["Instagram", form.instagram_url, instagramUrl],
+      ["TikTok", form.tiktok_url, tiktokUrl],
+      ["Facebook", form.facebook_url, facebookUrl],
+      ["Saluran WhatsApp", form.whatsapp_channel_url, whatsappChannelUrl]
+    ];
+    const invalidUrl = urlFields.find(([, raw, normalized]) => raw && !normalized);
+
+    if (invalidUrl) {
+      setSaving(false);
+      setMessage(`${invalidUrl[0]} harus berupa link yang valid.`);
+      return;
+    }
+
     const payload = {
       store_name: form.store_name,
       slogan: form.slogan,
       whatsapp_number: form.whatsapp_number,
-      instagram_url: form.instagram_url || null,
-      tiktok_url: form.tiktok_url || null,
+      instagram_url: instagramUrl,
+      tiktok_url: tiktokUrl,
+      facebook_url: facebookUrl,
+      whatsapp_channel_url: whatsappChannelUrl,
       default_whatsapp_message: form.default_whatsapp_message || null
     };
 
@@ -103,6 +124,24 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
             onChange={(event) => update("tiktok_url", event.target.value)}
             className="input-field"
             placeholder="https://tiktok.com/@..."
+          />
+        </label>
+        <label className="block space-y-2">
+          <span className="label-field">Facebook URL</span>
+          <input
+            value={form.facebook_url || ""}
+            onChange={(event) => update("facebook_url", event.target.value)}
+            className="input-field"
+            placeholder="https://facebook.com/..."
+          />
+        </label>
+        <label className="block space-y-2">
+          <span className="label-field">Saluran WhatsApp URL</span>
+          <input
+            value={form.whatsapp_channel_url || ""}
+            onChange={(event) => update("whatsapp_channel_url", event.target.value)}
+            className="input-field"
+            placeholder="https://whatsapp.com/channel/..."
           />
         </label>
         <label className="block space-y-2 sm:col-span-2">

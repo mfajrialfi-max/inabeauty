@@ -4,6 +4,7 @@ import { MessageCircle, Minus, Plus, ShoppingBag } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { Product, ProductVariant, SiteSettings } from "@/types/catalog";
 import { AddToCartButton } from "@/components/products/add-to-cart-button";
+import { ShareActions } from "@/components/share/share-actions";
 import { buildProductQuestionUrl } from "@/lib/whatsapp";
 import {
   formatRupiah,
@@ -151,6 +152,13 @@ export function ProductPurchasePanel({
           <MessageCircle className="h-4 w-4" />
           Tanya Admin
         </a>
+      </div>
+
+      <div className="mt-5">
+        <ShareActions
+          title={`${product.name} | INA BEAUTY`}
+          text={`Aku menemukan ${product.name} di katalog INA BEAUTY.`}
+        />
       </div>
     </div>
   );

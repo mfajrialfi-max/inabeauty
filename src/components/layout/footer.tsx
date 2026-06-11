@@ -1,9 +1,37 @@
 import Link from "next/link";
-import { Camera, MessageCircle, Music2 } from "lucide-react";
+import { Camera, Megaphone, MessageCircle, Music2, ThumbsUp } from "lucide-react";
 import type { SiteSettings } from "@/types/catalog";
 import { buildDefaultAdminUrl } from "@/lib/whatsapp";
+import { normalizeOptionalUrl } from "@/lib/utils";
 
 export function Footer({ settings }: { settings: SiteSettings }) {
+  const socialLinks = [
+    {
+      label: "Instagram",
+      href: normalizeOptionalUrl(settings.instagram_url),
+      icon: Camera,
+      className: "bg-blush-50 text-blush-700 hover:bg-blush-100"
+    },
+    {
+      label: "TikTok",
+      href: normalizeOptionalUrl(settings.tiktok_url),
+      icon: Music2,
+      className: "bg-zinc-900 text-white hover:bg-zinc-700"
+    },
+    {
+      label: "Facebook",
+      href: normalizeOptionalUrl(settings.facebook_url),
+      icon: ThumbsUp,
+      className: "bg-blue-50 text-blue-700 hover:bg-blue-100"
+    },
+    {
+      label: "Saluran WhatsApp",
+      href: normalizeOptionalUrl(settings.whatsapp_channel_url),
+      icon: Megaphone,
+      className: "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+    }
+  ].filter((item) => item.href);
+
   return (
     <footer className="border-t border-blush-100 bg-white pb-24 sm:pb-0">
       <div className="container-page grid gap-8 py-10 md:grid-cols-[1.2fr_0.8fr_0.8fr]">
@@ -44,30 +72,19 @@ export function Footer({ settings }: { settings: SiteSettings }) {
             >
               <MessageCircle className="h-5 w-5" />
             </a>
-            {settings.instagram_url ? (
+            {socialLinks.map((item) => (
               <a
-                href={settings.instagram_url}
+                key={item.label}
+                href={item.href || "#"}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blush-50 text-blush-700 transition hover:bg-blush-100"
-                aria-label="Instagram INA BEAUTY"
-                title="Instagram"
+                className={`inline-flex h-10 w-10 items-center justify-center rounded-full transition ${item.className}`}
+                aria-label={`${item.label} INA BEAUTY`}
+                title={item.label}
               >
-                <Camera className="h-5 w-5" />
+                <item.icon className="h-5 w-5" />
               </a>
-            ) : null}
-            {settings.tiktok_url ? (
-              <a
-                href={settings.tiktok_url}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-zinc-900 text-white transition hover:bg-zinc-700"
-                aria-label="TikTok INA BEAUTY"
-                title="TikTok"
-              >
-                <Music2 className="h-5 w-5" />
-              </a>
-            ) : null}
+            ))}
           </div>
         </div>
       </div>

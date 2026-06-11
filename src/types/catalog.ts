@@ -52,6 +52,8 @@ export type SiteSettings = {
   whatsapp_number: string;
   instagram_url: string | null;
   tiktok_url: string | null;
+  facebook_url: string | null;
+  whatsapp_channel_url: string | null;
   default_whatsapp_message: string | null;
 };
 

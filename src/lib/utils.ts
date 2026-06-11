@@ -74,3 +74,25 @@ export function formatCategoryOptionLabel(category: Category, categories: Catego
 
   return parent ? `${parent.name} / ${category.name}` : category.name;
 }
+
+export function normalizeOptionalUrl(value?: string | null) {
+  const trimmed = (value || "").trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+
+  try {
+    const url = new URL(withProtocol);
+
+    if (!["http:", "https:"].includes(url.protocol)) {
+      return null;
+    }
+
+    return url.toString();
+  } catch {
+    return null;
+  }
+}

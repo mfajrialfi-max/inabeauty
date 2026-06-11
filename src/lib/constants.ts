@@ -8,8 +8,10 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   store_name: "INA BEAUTY",
   slogan: "Cantik Alami, Percaya Diri Setiap Hari",
   whatsapp_number: DEFAULT_WHATSAPP_NUMBER,
-  instagram_url: "https://instagram.com/",
-  tiktok_url: "https://tiktok.com/",
+  instagram_url: null,
+  tiktok_url: null,
+  facebook_url: null,
+  whatsapp_channel_url: null,
   default_whatsapp_message:
     "Halo Admin INA BEAUTY, saya ingin bertanya tentang produk."
 };

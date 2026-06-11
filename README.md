@@ -26,7 +26,7 @@ npm install
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-ADMIN_EMAILS=muhammadfajrialkhafizi@gmail.com
+ADMIN_EMAILS=admin@example.com
 NEXT_PUBLIC_DEFAULT_WHATSAPP_NUMBER=6281234567890
 ```
 
@@ -36,13 +36,7 @@ NEXT_PUBLIC_DEFAULT_WHATSAPP_NUMBER=6281234567890
 supabase/schema.sql
 ```
 
-4. Buat user admin di Supabase Auth dengan email:
-
-```bash
-muhammadfajrialkhafizi@gmail.com
-```
-
-Setelah user dibuat, beri role admin pada `app_metadata` user tersebut:
+4. Buat user admin di Supabase Auth. Setelah user dibuat, beri role admin pada `app_metadata` user tersebut:
 
 ```json
 {
@@ -50,13 +44,13 @@ Setelah user dibuat, beri role admin pada `app_metadata` user tersebut:
 }
 ```
 
-Cara cepatnya: setelah user Auth dibuat, jalankan file ini di Supabase SQL Editor:
+Cara cepatnya: setelah user Auth dibuat, ubah email placeholder di file ini menjadi email admin asli, lalu jalankan di Supabase SQL Editor:
 
 ```bash
 supabase/admin-role.sql
 ```
 
-RLS di database memakai `app_metadata.role = "admin"` untuk insert, update, dan delete. `ADMIN_EMAILS` dipakai di middleware Next.js sebagai proteksi UI tambahan.
+RLS dan UI admin sama-sama mensyaratkan `app_metadata.role = "admin"`. `ADMIN_EMAILS` adalah allowlist tambahan yang disimpan di environment variable, bukan ditampilkan di halaman login.
 
 5. Update settings toko di `/admin/settings`, terutama nomor WhatsApp admin.
 
@@ -85,7 +79,7 @@ Rekomendasi paling sederhana untuk project ini:
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-ADMIN_EMAILS=...
+ADMIN_EMAILS=admin@example.com
 NEXT_PUBLIC_DEFAULT_WHATSAPP_NUMBER=...
 ```
 

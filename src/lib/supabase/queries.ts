@@ -63,7 +63,10 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     return demoSettings;
   }
 
-  return data as SiteSettings;
+  return {
+    ...demoSettings,
+    ...(data as Partial<SiteSettings>)
+  };
 }
 
 export async function getCategories({ includeInactive = false } = {}): Promise<Category[]> {
@@ -84,7 +87,7 @@ export async function getCategories({ includeInactive = false } = {}): Promise<C
   const { data, error } = await query;
 
   if (error || !data) {
-    return includeInactive ? demoCategories : demoCategories.filter((category) => category.is_active);
+    return includeInactive ? [] : demoCategories.filter((category) => category.is_active);
   }
 
   return data as Category[];
@@ -197,7 +200,7 @@ export async function getAdminProducts(filters: ProductFilters = {}): Promise<Pr
   const { data, error } = await query;
 
   if (error || !data) {
-    return filterLocalProducts(filters);
+    return [];
   }
 
   return data.map((item) => mapProduct(item as Record<string, unknown>));
@@ -217,7 +220,7 @@ export async function getAdminProductById(id: string): Promise<Product | null> {
     .maybeSingle();
 
   if (error) {
-    return demoProducts.find((product) => product.id === id) || null;
+    return null;
   }
 
   if (!data) {

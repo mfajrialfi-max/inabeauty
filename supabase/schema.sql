@@ -52,8 +52,16 @@ create table if not exists public.site_settings (
   whatsapp_number text not null default '6281234567890',
   instagram_url text,
   tiktok_url text,
+  facebook_url text,
+  whatsapp_channel_url text,
   default_whatsapp_message text default 'Halo Admin INA BEAUTY, saya ingin bertanya tentang produk.'
 );
+
+alter table public.site_settings
+add column if not exists facebook_url text;
+
+alter table public.site_settings
+add column if not exists whatsapp_channel_url text;
 
 create or replace function public.set_updated_at()
 returns trigger
@@ -186,12 +194,16 @@ insert into public.site_settings (
   whatsapp_number,
   instagram_url,
   tiktok_url,
+  facebook_url,
+  whatsapp_channel_url,
   default_whatsapp_message
 )
 select
   'INA BEAUTY',
   'Cantik Alami, Percaya Diri Setiap Hari',
   '6281234567890',
+  null,
+  null,
   null,
   null,
   'Halo Admin INA BEAUTY, saya ingin bertanya tentang produk.'
