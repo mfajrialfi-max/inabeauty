@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type { Product, ProductVariant } from "@/types/catalog";
+import type { Category, Product, ProductVariant } from "@/types/catalog";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -61,4 +61,16 @@ export function getTotalStock(product: Product) {
 
     return total + Math.max(0, variant.stock);
   }, 0);
+}
+
+export function getTopLevelCategories(categories: Category[]) {
+  return categories.filter((category) => !category.parent_category_id);
+}
+
+export function formatCategoryOptionLabel(category: Category, categories: Category[]) {
+  const parent = category.parent_category_id
+    ? categories.find((item) => item.id === category.parent_category_id)
+    : null;
+
+  return parent ? `${parent.name} / ${category.name}` : category.name;
 }

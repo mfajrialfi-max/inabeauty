@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import type { Category, Product, ProductImage, ProductStatus, ProductVariant } from "@/types/catalog";
 import { PRODUCT_STATUSES } from "@/lib/constants";
 import { getBrowserSupabase } from "@/lib/supabase/client";
-import { slugify } from "@/lib/utils";
+import { formatCategoryOptionLabel, slugify } from "@/lib/utils";
 
 type DraftVariant = Omit<ProductVariant, "id" | "product_id"> & {
   id?: string;
@@ -251,7 +251,7 @@ export function ProductForm({ categories, initialProduct }: ProductFormProps) {
                 <option value="">Tanpa kategori</option>
                 {categories.map((category) => (
                   <option key={category.id} value={category.id}>
-                    {category.name}
+                    {formatCategoryOptionLabel(category, categories)}
                   </option>
                 ))}
               </select>

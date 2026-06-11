@@ -17,12 +17,27 @@ export function CartClient({ settings }: { settings: SiteSettings }) {
     note: ""
   });
   const [error, setError] = useState("");
+  const [honeypot, setHoneypot] = useState("");
+  const [sending, setSending] = useState(false);
 
   function updateCustomer(field: keyof CustomerOrder, value: string) {
     setCustomer((current) => ({ ...current, [field]: value }));
   }
 
   function sendOrder() {
+    if (honeypot.trim()) {
+      setError("Pesanan tidak dapat diproses.");
+      return;
+    }
+
+    const lastOrderSentAt = Number(window.localStorage.getItem("ina-beauty-last-order") || 0);
+    const secondsSinceLastOrder = (Date.now() - lastOrderSentAt) / 1000;
+
+    if (lastOrderSentAt && secondsSinceLastOrder < 45) {
+      setError("Tunggu sebentar sebelum mengirim pesanan lagi.");
+      return;
+    }
+
     if (items.length === 0) {
       setError("Tambahkan produk ke pesanan terlebih dahulu.");
       return;
@@ -37,8 +52,11 @@ export function CartClient({ settings }: { settings: SiteSettings }) {
     const url = buildWhatsAppUrl(settings.whatsapp_number, message);
 
     setError("");
+    setSending(true);
+    window.localStorage.setItem("ina-beauty-last-order", String(Date.now()));
     window.open(url, "_blank", "noopener,noreferrer");
     clearCart();
+    window.setTimeout(() => setSending(false), 1200);
   }
 
   return (
@@ -46,10 +64,6 @@ export function CartClient({ settings }: { settings: SiteSettings }) {
       <div className="mb-8">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sage">Pesanan</p>
         <h1 className="mt-2 text-3xl font-black text-ink md:text-5xl">Keranjang sementara</h1>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-600">
-          Produk disimpan di browser dengan localStorage. Pesanan final akan dikirim ke
-          WhatsApp admin untuk konfirmasi stok dan pembayaran.
-        </p>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_420px]">
@@ -137,6 +151,15 @@ export function CartClient({ settings }: { settings: SiteSettings }) {
         <aside className="h-fit rounded-[8px] border border-blush-100 bg-white p-5 shadow-soft">
           <h2 className="text-xl font-black text-ink">Data pelanggan</h2>
           <div className="mt-5 space-y-4">
+            <label className="hidden" aria-hidden="true">
+              Website
+              <input
+                tabIndex={-1}
+                autoComplete="off"
+                value={honeypot}
+                onChange={(event) => setHoneypot(event.target.value)}
+              />
+            </label>
             <label className="block space-y-2">
               <span className="label-field">Nama wajib</span>
               <input
@@ -189,9 +212,14 @@ export function CartClient({ settings }: { settings: SiteSettings }) {
             </p>
           ) : null}
 
-          <button type="button" onClick={sendOrder} className="button-primary mt-5 w-full">
+          <button
+            type="button"
+            onClick={sendOrder}
+            className="button-primary mt-5 w-full"
+            disabled={sending}
+          >
             <MessageCircle className="h-4 w-4" />
-            Pesan via WhatsApp
+            {sending ? "Membuka WhatsApp..." : "Pesan via WhatsApp"}
           </button>
         </aside>
       </div>

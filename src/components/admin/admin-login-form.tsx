@@ -5,6 +5,11 @@ import { Lock, Mail } from "lucide-react";
 import { useState } from "react";
 import { getBrowserSupabase } from "@/lib/supabase/client";
 
+const LOGIN_ATTEMPTS_KEY = "ina-beauty-admin-login-attempts";
+const LOGIN_LOCKED_UNTIL_KEY = "ina-beauty-admin-login-locked-until";
+const MAX_LOGIN_ATTEMPTS = 5;
+const LOCKOUT_MINUTES = 15;
+
 export function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -15,6 +20,14 @@ export function AdminLoginForm() {
 
   async function login(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const lockedUntil = Number(window.localStorage.getItem(LOGIN_LOCKED_UNTIL_KEY) || 0);
+
+    if (lockedUntil && Date.now() < lockedUntil) {
+      const minutesLeft = Math.ceil((lockedUntil - Date.now()) / 60000);
+      setError(`Terlalu banyak percobaan. Coba lagi sekitar ${minutesLeft} menit.`);
+      return;
+    }
+
     const supabase = getBrowserSupabase();
 
     if (!supabase) {
@@ -33,10 +46,25 @@ export function AdminLoginForm() {
     setLoading(false);
 
     if (signInError) {
-      setError(signInError.message);
+      const attempts = Number(window.localStorage.getItem(LOGIN_ATTEMPTS_KEY) || 0) + 1;
+      window.localStorage.setItem(LOGIN_ATTEMPTS_KEY, String(attempts));
+
+      if (attempts >= MAX_LOGIN_ATTEMPTS) {
+        window.localStorage.setItem(
+          LOGIN_LOCKED_UNTIL_KEY,
+          String(Date.now() + LOCKOUT_MINUTES * 60 * 1000)
+        );
+        window.localStorage.removeItem(LOGIN_ATTEMPTS_KEY);
+        setError(`Login dikunci sementara selama ${LOCKOUT_MINUTES} menit.`);
+        return;
+      }
+
+      setError("Email atau password admin tidak sesuai.");
       return;
     }
 
+    window.localStorage.removeItem(LOGIN_ATTEMPTS_KEY);
+    window.localStorage.removeItem(LOGIN_LOCKED_UNTIL_KEY);
     router.replace(searchParams.get("redirectedFrom") || "/admin/dashboard");
     router.refresh();
   }

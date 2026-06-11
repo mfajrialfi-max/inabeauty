@@ -6,6 +6,7 @@ export const demoCategories: Category[] = [
     id: "cat-skincare",
     name: "Skincare",
     slug: "skincare",
+    parent_category_id: null,
     sort_order: 1,
     is_active: true
   },
@@ -13,6 +14,7 @@ export const demoCategories: Category[] = [
     id: "cat-makeup",
     name: "Makeup",
     slug: "makeup",
+    parent_category_id: null,
     sort_order: 2,
     is_active: true
   },
@@ -20,6 +22,7 @@ export const demoCategories: Category[] = [
     id: "cat-fashion",
     name: "Fashion Wanita",
     slug: "fashion-wanita",
+    parent_category_id: null,
     sort_order: 3,
     is_active: true
   },
@@ -27,7 +30,24 @@ export const demoCategories: Category[] = [
     id: "cat-accessories",
     name: "Aksesoris",
     slug: "aksesoris",
+    parent_category_id: null,
     sort_order: 4,
+    is_active: true
+  },
+  {
+    id: "cat-skincare-serum",
+    name: "Serum",
+    slug: "serum",
+    parent_category_id: "cat-skincare",
+    sort_order: 11,
+    is_active: true
+  },
+  {
+    id: "cat-fashion-blouse",
+    name: "Blouse",
+    slug: "blouse",
+    parent_category_id: "cat-fashion",
+    sort_order: 31,
     is_active: true
   }
 ];
@@ -113,7 +133,7 @@ export const demoProducts: Product[] = [
     slug: "radiant-dew-serum",
     description:
       "Serum ringan untuk membantu kulit tampak lebih lembap, segar, dan bercahaya alami sepanjang hari.",
-    category_id: "cat-skincare",
+    category_id: "cat-skincare-serum",
     price: 145000,
     discount_price: 119000,
     main_image_url:
@@ -123,7 +143,7 @@ export const demoProducts: Product[] = [
     is_promo: true,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    category: demoCategories[0],
+    category: demoCategories[4],
     product_images: [
       {
         id: "img-serum-1",
@@ -161,7 +181,7 @@ export const demoProducts: Product[] = [
     slug: "mira-soft-linen-blouse",
     description:
       "Blouse wanita dengan bahan nyaman dan potongan clean untuk gaya feminin yang tetap effortless.",
-    category_id: "cat-fashion",
+    category_id: "cat-fashion-blouse",
     price: 229000,
     discount_price: 199000,
     main_image_url:
@@ -171,7 +191,7 @@ export const demoProducts: Product[] = [
     is_promo: true,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    category: demoCategories[2],
+    category: demoCategories[5],
     product_images: [],
     product_variants: variants.blouse
   },

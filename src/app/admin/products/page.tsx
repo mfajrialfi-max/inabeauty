@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PackagePlus, Search } from "lucide-react";
 import { AdminProductsTable } from "@/components/admin/admin-products-table";
 import { getAdminProducts, getCategories } from "@/lib/supabase/queries";
+import { formatCategoryOptionLabel } from "@/lib/utils";
 
 type AdminProductsPageProps = {
   searchParams: Promise<{
@@ -50,7 +51,7 @@ export default async function AdminProductsPage({ searchParams }: AdminProductsP
           <option value="">Semua kategori</option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
-              {category.name}
+              {formatCategoryOptionLabel(category, categories)}
             </option>
           ))}
         </select>

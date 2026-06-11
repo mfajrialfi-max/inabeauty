@@ -4,9 +4,13 @@ create table if not exists public.categories (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   slug text not null unique,
+  parent_category_id uuid references public.categories(id) on delete set null,
   sort_order int not null default 0,
   is_active boolean not null default true
 );
+
+alter table public.categories
+add column if not exists parent_category_id uuid references public.categories(id) on delete set null;
 
 create table if not exists public.products (
   id uuid primary key default gen_random_uuid(),
@@ -193,12 +197,24 @@ select
   'Halo Admin INA BEAUTY, saya ingin bertanya tentang produk.'
 where not exists (select 1 from public.site_settings);
 
-insert into public.categories (name, slug, sort_order, is_active)
+insert into public.categories (name, slug, parent_category_id, sort_order, is_active)
 values
-  ('Skincare', 'skincare', 1, true),
-  ('Makeup', 'makeup', 2, true),
-  ('Fashion Wanita', 'fashion-wanita', 3, true),
-  ('Aksesoris', 'aksesoris', 4, true)
+  ('Skincare', 'skincare', null, 1, true),
+  ('Makeup', 'makeup', null, 2, true),
+  ('Fashion Wanita', 'fashion-wanita', null, 3, true),
+  ('Aksesoris', 'aksesoris', null, 4, true)
+on conflict (slug) do nothing;
+
+insert into public.categories (name, slug, parent_category_id, sort_order, is_active)
+select 'Serum', 'serum', parent.id, 11, true
+from public.categories parent
+where parent.slug = 'skincare'
+on conflict (slug) do nothing;
+
+insert into public.categories (name, slug, parent_category_id, sort_order, is_active)
+select 'Blouse', 'blouse', parent.id, 31, true
+from public.categories parent
+where parent.slug = 'fashion-wanita'
 on conflict (slug) do nothing;
 
 insert into storage.buckets (id, name, public)

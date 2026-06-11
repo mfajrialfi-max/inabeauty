@@ -4,6 +4,7 @@ export type Category = {
   id: string;
   name: string;
   slug: string;
+  parent_category_id: string | null;
   sort_order: number;
   is_active: boolean;
 };

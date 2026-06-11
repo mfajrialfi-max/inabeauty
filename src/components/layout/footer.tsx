@@ -5,7 +5,7 @@ import { buildDefaultAdminUrl } from "@/lib/whatsapp";
 
 export function Footer({ settings }: { settings: SiteSettings }) {
   return (
-    <footer className="border-t border-blush-100 bg-white">
+    <footer className="border-t border-blush-100 bg-white pb-24 sm:pb-0">
       <div className="container-page grid gap-8 py-10 md:grid-cols-[1.2fr_0.8fr_0.8fr]">
         <div className="max-w-md">
           <img
@@ -27,9 +27,6 @@ export function Footer({ settings }: { settings: SiteSettings }) {
             </Link>
             <Link href="/cart" className="hover:text-blush-700">
               Pesanan Saya
-            </Link>
-            <Link href="/admin/login" className="hover:text-blush-700">
-              Admin
             </Link>
           </div>
         </div>

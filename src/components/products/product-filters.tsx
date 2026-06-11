@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import type { Category } from "@/types/catalog";
+import { formatCategoryOptionLabel } from "@/lib/utils";
 
 type ProductFiltersProps = {
   categories: Category[];
@@ -33,7 +34,7 @@ export function ProductFilters({
           <option value="">Semua kategori</option>
           {categories.map((category) => (
             <option key={category.id} value={category.slug}>
-              {category.name}
+              {formatCategoryOptionLabel(category, categories)}
             </option>
           ))}
         </select>

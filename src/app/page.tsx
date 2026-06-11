@@ -3,6 +3,7 @@ import { ArrowRight, HeartHandshake, MessageCircle, ShieldCheck, Sparkles } from
 import { ProductCard } from "@/components/products/product-card";
 import { getCategories, getProducts, getSiteSettings } from "@/lib/supabase/queries";
 import { buildDefaultAdminUrl } from "@/lib/whatsapp";
+import { getTopLevelCategories } from "@/lib/utils";
 
 export default async function HomePage() {
   const [settings, categories, featuredProducts] = await Promise.all([
@@ -10,6 +11,7 @@ export default async function HomePage() {
     getCategories(),
     getProducts({ featuredOnly: true })
   ]);
+  const topLevelCategories = getTopLevelCategories(categories);
 
   return (
     <>
@@ -85,7 +87,7 @@ export default async function HomePage() {
           </div>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {categories.map((category) => (
+            {topLevelCategories.map((category) => (
               <Link
                 key={category.id}
                 href={`/products?category=${category.slug}`}

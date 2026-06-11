@@ -5,15 +5,19 @@ import { Plus, Save, Trash2 } from "lucide-react";
 import { useState } from "react";
 import type { Category } from "@/types/catalog";
 import { getBrowserSupabase } from "@/lib/supabase/client";
-import { slugify } from "@/lib/utils";
+import { formatCategoryOptionLabel, slugify } from "@/lib/utils";
 
-type CategoryDraft = Pick<Category, "name" | "slug" | "sort_order" | "is_active"> & {
+type CategoryDraft = Pick<
+  Category,
+  "name" | "slug" | "parent_category_id" | "sort_order" | "is_active"
+> & {
   id?: string;
 };
 
 const emptyCategory: CategoryDraft = {
   name: "",
   slug: "",
+  parent_category_id: null,
   sort_order: 0,
   is_active: true
 };
@@ -39,6 +43,7 @@ export function CategoriesManager({ categories }: { categories: Category[] }) {
     const payload = {
       name: draft.name,
       slug: draft.slug || slugify(draft.name),
+      parent_category_id: draft.parent_category_id || null,
       sort_order: Number(draft.sort_order || 0),
       is_active: draft.is_active
     };
@@ -113,6 +118,31 @@ export function CategoriesManager({ categories }: { categories: Category[] }) {
             />
           </label>
           <label className="block space-y-2">
+            <span className="label-field">Induk kategori opsional</span>
+            <select
+              value={draft.parent_category_id || ""}
+              onChange={(event) =>
+                setDraft((current) => ({
+                  ...current,
+                  parent_category_id: event.target.value || null
+                }))
+              }
+              className="input-field"
+            >
+              <option value="">Kategori utama</option>
+              {categories
+                .filter((category) => category.id !== draft.id)
+                .map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {formatCategoryOptionLabel(category, categories)}
+                  </option>
+                ))}
+            </select>
+            <span className="text-xs leading-5 text-zinc-500">
+              Pakai ini untuk membuat subkategori, misalnya Fashion Wanita / Blouse.
+            </span>
+          </label>
+          <label className="block space-y-2">
             <span className="label-field">Urutan tampil</span>
             <input
               type="number"
@@ -163,6 +193,7 @@ export function CategoriesManager({ categories }: { categories: Category[] }) {
             <thead className="bg-zinc-50 text-left text-xs uppercase tracking-[0.14em] text-zinc-500">
               <tr>
                 <th className="px-4 py-4">Nama</th>
+                <th className="px-4 py-4">Induk</th>
                 <th className="px-4 py-4">Slug</th>
                 <th className="px-4 py-4">Urutan</th>
                 <th className="px-4 py-4">Status</th>
@@ -173,6 +204,12 @@ export function CategoriesManager({ categories }: { categories: Category[] }) {
               {categories.map((category) => (
                 <tr key={category.id}>
                   <td className="px-4 py-4 font-black text-ink">{category.name}</td>
+                  <td className="px-4 py-4 text-zinc-600">
+                    {category.parent_category_id
+                      ? categories.find((item) => item.id === category.parent_category_id)?.name ||
+                        "-"
+                      : "Kategori utama"}
+                  </td>
                   <td className="px-4 py-4 text-zinc-600">{category.slug}</td>
                   <td className="px-4 py-4 text-zinc-600">{category.sort_order}</td>
                   <td className="px-4 py-4">
